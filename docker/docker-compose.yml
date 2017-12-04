@@ -1,0 +1,33 @@
+version: '2'
+services:
+  php72:
+    container_name: php72
+    build: php/
+    volumes:
+      - ../config/php:/usr/local/etc/php
+      - ../code/myapp:/var/www/html/myapp
+    depends_on:
+      - mysql
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - 8080:80
+    volumes:
+      - ../config/nginx:/etc/nginx/conf.d
+      - ../code/myapp:/var/www/html/myapp
+      - ../logs:/var/log/nginx
+    depends_on:
+      - php72
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - ../mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=docker_sample
